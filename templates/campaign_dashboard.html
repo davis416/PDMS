@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDMS - Campaign Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 flex flex-col min-h-screen text-slate-800 antialiased">
+    <!-- Global Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-lg shadow-inner">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight">PDMS <span class="text-blue-400 font-light">Admin</span>
+                </h1>
+            </div>
+
+            <div class="flex items-center space-x-1 font-medium text-sm">
+                <a href="{% url 'admin_dashboard' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Overview</a>
+                <a href="{% url 'campaign_list' %}"
+                    class="px-4 py-2 rounded-lg bg-white/10 text-white shadow-sm transition">Campaigns</a>
+                <a href="{% url 'volunteer_list' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Volunteers</a>
+                <a href="{% url 'admin_user_list' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Admins</a>
+                <div class="w-px h-6 bg-slate-700 mx-4"></div>
+                <div class="flex items-center space-x-2 text-slate-300">
+                    <span
+                        class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">{{ user.username|make_list|first|upper }}</span>
+                    <span>{{ user.username }}</span>
+                </div>
+                <form action="{% url 'logout' %}" method="post" class="inline m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="ml-4 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition text-xs font-bold border border-rose-500/20 shadow-sm">Sign Out</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-10 flex-grow">
+        <!-- Header Actions -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Campaign Management</h2>
+                <p class="text-slate-500 mt-1">Orchestrate fundraising goals and track dynamic progress.</p>
+            </div>
+            <a href="{% url 'campaign_create' %}"
+                class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md transition duration-150 ease-in-out transform hover:-translate-y-0.5">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Launch Campaign
+            </a>
+        </div>
+
+        <!-- Table Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Campaign Name</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Active Dates</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Collected vs Target</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Progress</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100">
+                        {% for campaign in campaigns %}
+                        <tr class="hover:bg-slate-50 transition duration-150">
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <a href="{% url 'campaign_detail' campaign.pk %}"
+                                    class="text-sm font-bold text-blue-600 hover:text-blue-800 transition">
+                                    {{ campaign.Name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                                <span class="text-sm font-medium text-slate-600">
+                                    {{ campaign.Start_Date }} &nbsp;<span class="text-slate-400">&rarr;</span>&nbsp; {{ campaign.End_Date }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-sm">
+                                <span class="font-bold text-emerald-600">
+                                    Ksh {{ campaign.collected|default:"0.00"|floatformat:2 }}
+                                </span>
+                                <span class="text-slate-400 mx-1">/</span>
+                                <span class="text-slate-600 font-medium">
+                                    Ksh {{ campaign.Target_Amount|floatformat:0 }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap w-48">
+                                <div
+                                    class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden shadow-inner flex items-center">
+                                    {% widthratio campaign.collected|default:0 campaign.Target_Amount 100 as percentage %}
+                                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full"
+                                        style="width: {{ percentage }}%"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-right text-sm">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <a href="{% url 'campaign_update' campaign.pk %}"
+                                        class="text-indigo-600 hover:text-indigo-900 font-semibold transition">Edit</a>
+                                    <span class="text-slate-300">|</span>
+                                    <a href="{% url 'campaign_delete' campaign.pk %}"
+                                        class="text-rose-600 hover:text-rose-900 font-semibold transition">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 whitespace-nowrap text-center text-slate-500 font-medium">
+                                No campaigns found. Create one to get started.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

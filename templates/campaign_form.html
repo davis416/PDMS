@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDMS - {{ action }} Campaign</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <main class="container mx-auto p-8 max-w-lg flex-grow">
+        <div class="mb-6">
+            <a href="{% url 'campaign_list' %}" class="text-blue-600 hover:underline">&larr; Back to Campaigns</a>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">{{ action }} Campaign</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 break-words"
+                            for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <p class="text-red-500 text-xs italic mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-6 flex justify-between">
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Save Campaign
+                    </button>
+                    {% if action == 'Update' %}
+                    <a href="{% url 'campaign_delete' form.instance.pk %}"
+                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

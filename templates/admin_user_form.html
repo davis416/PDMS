@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDMS - Add Administrator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base Django auth form styling overrides */
+        .helptext {
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        ul.errorlist {
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-style: italic;
+            list-style-type: none;
+            padding: 0;
+            margin-top: 0.25rem;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            appearance: none;
+            border-radius: 0.25rem;
+            border: 1px solid #d1d5db;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            color: #374151;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <main class="container mx-auto p-8 max-w-lg flex-grow">
+        <div class="mb-6">
+            <a href="{% url 'admin_user_list' %}" class="text-blue-600 hover:underline">&larr; Back to Admins</a>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Add Administrator</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 break-words"
+                            for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <p class="helptext">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                        {{ field.errors }}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-6">
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Create Administrator
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
