@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDMS Admin - {{ donor.Email }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 flex flex-col min-h-screen text-slate-800 antialiased">
+    <!-- Global Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-lg shadow-inner">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight">PDMS <span class="text-blue-400 font-light">Admin</span>
+                </h1>
+            </div>
+
+            <div class="flex items-center space-x-1 font-medium text-sm">
+                <a href="{% url 'admin_dashboard' %}"
+                    class="px-4 py-2 rounded-lg bg-white/10 text-white shadow-sm transition">Overview</a>
+                <a href="{% url 'campaign_list' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Campaigns</a>
+                <a href="{% url 'volunteer_list' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Volunteers</a>
+                <a href="{% url 'admin_user_list' %}"
+                    class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition">Admins</a>
+                <div class="w-px h-6 bg-slate-700 mx-4"></div>
+                <div class="flex items-center space-x-2 text-slate-300">
+                    <span
+                        class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">{{ user.username|make_list|first|upper }}</span>
+                    <span>{{ user.username }}</span>
+                </div>
+                <form action="{% url 'logout' %}" method="post" class="inline m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="ml-4 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition text-xs font-bold border border-rose-500/20 shadow-sm">Sign Out</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-10 flex-grow max-w-6xl">
+        <div class="mb-6">
+            <a href="{% url 'admin_dashboard' %}"
+                class="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-blue-600 transition">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Command Center
+            </a>
+        </div>
+
+        <!-- Upper Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden relative">
+            <div class="absolute inset-0 h-32 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+            <div
+                class="px-8 pt-20 pb-8 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div class="flex items-end space-x-6">
+                    <div class="bg-white p-2 rounded-full shadow-md border-4 border-slate-50">
+                        <div
+                            class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-3xl font-extrabold shadow-inner">
+                            {{ donor.Email|make_list|first|upper }}
+                        </div>
+                    </div>
+                    <div class="pb-2">
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ donor.Email }}</h2>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="inline-flex items-center text-sm font-medium text-slate-500">
+                                <svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                    </path>
+                                </svg>
+                                {{ donor.Phone|default:"No Phone Provided" }}
+                            </span>
+                            <span class="inline-flex items-center text-sm font-medium text-slate-500">
+                                <svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                Prefers: {{ donor.get_Preferred_Communication_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+                    <a href="{% url 'donor_update' donor.pk %}"
+                        class="inline-flex items-center justify-center bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-2.5 px-6 rounded-xl shadow-sm transition duration-150">
+                        <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                            </path>
+                        </svg>
+                        Edit Profile
+                    </a>
+                    <a href="{% url 'donor_delete' donor.pk %}"
+                        class="inline-flex items-center justify-center bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 font-semibold py-2.5 px-6 rounded-xl shadow-sm transition duration-150">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                        Delete
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 px-8 py-5 border-t border-slate-200 flex flex-wrap gap-x-12 gap-y-4">
+                <div>
+                    <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mailing
+                        Address</span>
+                    <span class="text-sm font-medium text-slate-800">{{ donor.Address|default:"<span class='text-slate-400 italic'>Not Provided</span>"|safe }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <h3 class="text-xl font-bold text-slate-800 mb-4 px-2">Constituent Intel</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-center">
+                <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 mr-5">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wider">Lifetime Financial Support
+                    </h4>
+                    <p class="text-3xl font-extrabold text-slate-900 mt-1">Ksh {{ donor.Total_Donated|floatformat:2 }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-center">
+                <div class="w-14 h-14 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-5">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wider">AI Predictive Propensity</h4>
+                    {% if donor.Propensity_Score == None %}
+                    <p class="text-2xl font-bold text-slate-400 mt-1">Pending Sync</p>
+                    {% else %}
+                    <div class="flex items-baseline space-x-3 mt-1">
+                        <p class="text-3xl font-extrabold text-slate-900">{{ donor.Propensity_Score|floatformat:2 }}</p>
+                        {% if donor.Propensity_Score >= 0.8 %}
+                        <span
+                            class="inline-flex px-2 py-0.5 mt-2 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">HIGH
+                            LIKELIHOOD</span>
+                        {% elif donor.Propensity_Score >= 0.5 %}
+                        <span
+                            class="inline-flex px-2 py-0.5 mt-2 rounded bg-amber-100 text-amber-800 text-xs font-bold">WARM
+                            LEAD</span>
+                        {% else %}
+                        <span
+                            class="inline-flex px-2 py-0.5 mt-2 rounded bg-rose-100 text-rose-800 text-xs font-bold">COOL
+                            STATUS</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-bold text-slate-800 mb-4 px-2">Complete Transaction History</h3>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Amount
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Method
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            General Ledger (Campaign)</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-100">
+                    {% for d in donations %}
+                    <tr class="hover:bg-slate-50 transition duration-150">
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            <span class="text-sm font-medium text-slate-900">{{ d.Date|date:"M d, Y" }}</span>
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            <span class="text-sm font-bold text-emerald-600">Ksh {{ d.Amount|floatformat:2 }}</span>
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            {% if d.Status == 'COMPLETED' %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Cleared</span>
+                            {% elif d.Status == 'PENDING' %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-200">Processing</span>
+                            {% else %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-200">Failed</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap text-sm text-slate-500 font-medium">
+                            {{ d.get_Payment_Method_display }}
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            <span class="text-sm font-bold text-indigo-600">
+                                {{ d.CampaignID.Name|default:"General Operating Fund" }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-500 font-medium">
+                            No donations have been attributed to this profile yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+
+</html>
