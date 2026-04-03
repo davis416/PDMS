@@ -4,122 +4,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDMS - Change the World With Us</title>
+    <title>PDMS Foundation - Change the World With Us</title>
+    <meta name="description" content="Support impactful campaigns through the PDMS Foundation. Make secure donations and volunteer your time.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
+        * { box-sizing: border-box; }
         body {
+            font-family: 'Inter', sans-serif;
             background-image: url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Mobile nav */
+        #pub-mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        #pub-mobile-menu.open {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        /* Card hover lift */
+        .card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .card-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+
+        /* Page entrance */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        main > * { animation: fadeUp 0.4s ease both; }
+        main > *:nth-child(2) { animation-delay: 0.05s; }
+        main > *:nth-child(3) { animation-delay: 0.1s; }
+
+        /* Alert toast */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .alert-slide { animation: slideIn 0.35s ease; }
     </style>
 </head>
 
-<body class="min-h-screen text-gray-800 font-sans antialiased">
+<body class="min-h-screen text-gray-800 antialiased">
 
-    <!-- Hero Section & Nav -->
-    <header class="glass sticky top-0 z-50 shadow-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-3xl font-extrabold text-blue-700 tracking-tight">PDMS<span
-                    class="text-blue-500">Foundation</span></h1>
-            <nav>
-                <a href="#campaigns" class="text-gray-600 hover:text-blue-600 font-semibold px-4 transition">Our
-                    Campaigns</a>
-                <a href="#history" class="text-gray-600 hover:text-blue-600 font-semibold px-4 transition">My
-                    History</a>
-                <a href="#donate"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition transform hover:scale-105 ml-4">Donate
-                    Now</a>
+    <!-- Sticky Navigation -->
+    <header class="glass-dark sticky top-0 z-50 shadow-xl" role="banner">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-2" aria-label="PDMS Foundation home">
+                    <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-extrabold text-white tracking-tight">PDMS<span class="text-blue-400 font-light">Foundation</span></span>
+                </a>
+
+                <!-- Desktop nav -->
+                <nav class="hidden sm:flex items-center gap-1" aria-label="Site navigation">
+                    <a href="#campaigns" class="text-slate-300 hover:text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/5 transition text-sm">Our Campaigns</a>
+                    <a href="#history"   class="text-slate-300 hover:text-white font-semibold px-4 py-2 rounded-lg hover:bg-white/5 transition text-sm">My History</a>
+                    <a href="#donate"
+                       class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-2 px-5 rounded-full shadow-lg transition ml-2 text-sm hover:-translate-y-0.5 transform">
+                        Donate Now
+                    </a>
+                </nav>
+
+                <!-- Mobile hamburger -->
+                <button id="pub-hamburger" class="sm:hidden p-2 rounded-lg hover:bg-white/10 transition" aria-controls="pub-mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg id="pub-ham-icon" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="pub-close-icon" class="w-6 h-6 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="pub-mobile-menu" class="sm:hidden border-t border-white/10">
+            <nav class="container mx-auto px-4 py-4 space-y-1" aria-label="Mobile navigation">
+                <a href="#campaigns" class="block px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition" onclick="closeMobileMenu()">Our Campaigns</a>
+                <a href="#history"   class="block px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition" onclick="closeMobileMenu()">My Donation History</a>
+                <a href="#donate"    class="block px-4 py-3 text-sm font-bold text-blue-400 hover:text-white hover:bg-white/10 rounded-lg transition" onclick="closeMobileMenu()">Donate Now</a>
+                <a href="#volunteer" class="block px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition" onclick="closeMobileMenu()">Volunteer</a>
             </nav>
         </div>
     </header>
 
-    <main class="container mx-auto px-6 py-12 space-y-16">
+    <main class="container mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-14">
 
-        <!-- Alerts -->
+        <!-- Alert Messages -->
         {% if success_message %}
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-md rounded glass animate-bounce"
-            role="alert">
-            <p class="font-bold">Thank you!</p>
-            <p>{{ success_message }}</p>
+        <div class="glass rounded-2xl border-l-4 border-emerald-500 p-4 shadow-lg flex items-start gap-3 alert-slide" role="alert">
+            <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <div>
+                <p class="font-bold text-emerald-700">Thank you!</p>
+                <p class="text-emerald-600 text-sm mt-0.5">{{ success_message }}</p>
+            </div>
         </div>
         {% endif %}
         {% if error_message %}
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 shadow-md rounded glass" role="alert">
-            <p class="font-bold">Error</p>
-            <p>{{ error_message }}</p>
+        <div class="glass rounded-2xl border-l-4 border-rose-500 p-4 shadow-lg flex items-start gap-3 alert-slide" role="alert">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <p class="font-bold text-rose-700">Error</p>
+                <p class="text-rose-600 text-sm mt-0.5">{{ error_message }}</p>
+            </div>
         </div>
         {% endif %}
 
-        <!-- Active Campaigns Grid -->
-        <section id="campaigns">
+        <!-- Active Campaigns -->
+        <section id="campaigns" aria-labelledby="campaigns-heading">
             <div class="text-center mb-10">
-                <h2 class="text-4xl font-extrabold text-white drop-shadow-lg mb-4">Active Campaigns</h2>
-                <p class="text-xl text-blue-100 drop-shadow-md">Choose a cause and see the impact we are making
-                    together.</p>
+                <h1 id="campaigns-heading" class="text-4xl sm:text-5xl font-extrabold text-white drop-shadow-lg mb-4 leading-tight">
+                    Active Campaigns
+                </h1>
+                <p class="text-lg sm:text-xl text-blue-100 drop-shadow-md max-w-xl mx-auto">
+                    Choose a cause and see the impact we're making together.
+                </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {% for campaign in campaigns %}
-                <div
-                    class="glass rounded-2xl shadow-xl overflow-hidden transform transition duration-500 hover:scale-105 flex flex-col">
+                <article class="glass rounded-2xl shadow-xl overflow-hidden card-lift flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ campaign.Name }}</h3>
-                        <p class="text-sm text-gray-500 mb-6 font-medium">Ends: {{ campaign.End_Date|date:"M d, Y" }}
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{{ campaign.Name }}</h2>
+                        <p class="text-sm text-gray-500 mb-5 font-medium">
+                            <time>Ends: {{ campaign.End_Date|date:"M d, Y" }}</time>
                         </p>
 
                         <div class="mb-2 flex justify-between items-end">
-                            <span class="text-3xl font-bold text-blue-600">
+                            <span class="text-2xl sm:text-3xl font-bold text-blue-600">
                                 Ksh {{ campaign.collected|default:"0.00"|floatformat:2 }}
                             </span>
-                            <span class="text-sm text-gray-500 font-medium">
-                                Raised of Ksh {{ campaign.Target_Amount|floatformat:0 }}
+                            <span class="text-xs text-gray-500 font-medium text-right">
+                                of Ksh {{ campaign.Target_Amount|floatformat:0 }}<br>target
                             </span>
                         </div>
 
-                        <div class="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden shadow-inner">
-                            {% widthratio campaign.collected|default:0 campaign.Target_Amount 100 as percentage %}
-                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full"
-                                style="width: {{ percentage }}%"></div>
+                        {% widthratio campaign.collected|default:0 campaign.Target_Amount 100 as percentage %}
+                        <div class="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden shadow-inner">
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-700"
+                                 style="width: {{ percentage }}%"
+                                 role="progressbar" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
                         </div>
+                        <p class="text-xs text-gray-500 text-right font-medium">{{ percentage }}% funded</p>
                     </div>
-                </div>
+                    <div class="px-6 pb-5">
+                        <a href="#donate" onclick="document.getElementById('campaign_id').value='{{ campaign.pk }}'"
+                           class="block w-full text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 rounded-xl transition text-sm">
+                            Donate to This Campaign
+                        </a>
+                    </div>
+                </article>
                 {% empty %}
-                <div class="col-span-full text-center glass p-8 rounded-2xl">
-                    <p class="text-xl text-gray-600">No active campaigns at this time. Please consider a general fund
-                        donation.</p>
+                <div class="col-span-full text-center glass p-8 rounded-2xl shadow-lg">
+                    <p class="text-lg text-gray-600">No active campaigns right now. Consider a general fund donation below.</p>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Donation + History -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
             <!-- Donation Form -->
-            <section id="donate" class="glass p-8 rounded-2xl shadow-2xl">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Make a Donation</h2>
-                <form method="POST" action="{% url 'public_portal' %}">
+            <section id="donate" class="glass p-6 sm:p-8 rounded-2xl shadow-2xl" aria-labelledby="donate-heading">
+                <h2 id="donate-heading" class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Make a Donation</h2>
+                <form method="POST" action="{% url 'public_portal' %}" novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="action" value="donate">
 
                     <div class="mb-5">
-                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email Address *</label>
-                        <input type="email" id="email" name="email" value="{{ donor_email|default:'' }}" required
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 bg-white/50 backdrop-blur-sm">
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email Address <span class="text-rose-500" aria-hidden="true">*</span></label>
+                        <input type="email" id="email" name="email" value="{{ donor_email|default:'' }}" required autocomplete="email"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white/60 text-sm font-medium"
+                            placeholder="you@example.com">
                     </div>
 
                     <div class="mb-5">
-                        <label for="campaign_id" class="block text-gray-700 text-sm font-bold mb-2">Select
-                            Campaign</label>
+                        <label for="campaign_id" class="block text-gray-700 text-sm font-bold mb-2">Select Campaign</label>
                         <select id="campaign_id" name="campaign_id"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 bg-white/50 backdrop-blur-sm">
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white/60 text-sm font-medium">
                             <option value="">-- General Fund --</option>
                             {% for campaign in campaigns %}
                             <option value="{{ campaign.pk }}">{{ campaign.Name }}</option>
@@ -128,85 +222,82 @@
                     </div>
 
                     <div class="mb-5">
-                        <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Donation Amount (Ksh)
-                            *</label>
+                        <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Donation Amount (Ksh) <span class="text-rose-500" aria-hidden="true">*</span></label>
                         <input type="number" step="0.01" id="amount" name="amount" required min="1"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 text-xl font-bold text-green-600 bg-white/50 backdrop-blur-sm">
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-xl font-bold text-green-600 bg-white/60"
+                            placeholder="500">
                     </div>
 
-                    <div class="mb-8">
-                        <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Payment
-                            Method</label>
+                    <div class="mb-7">
+                        <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Payment Method</label>
                         <select id="payment_method" name="payment_method"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 bg-white/50 backdrop-blur-sm">
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white/60 text-sm font-medium">
                             <option value="CC">Credit Card (Secure)</option>
                             <option value="BANK">Bank Transfer</option>
                         </select>
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-extrabold py-4 px-6 rounded-xl shadow-lg transform transition duration-200 hover:scale-[1.02] text-lg">
+                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-extrabold py-4 px-6 rounded-xl shadow-lg transition hover:-translate-y-0.5 transform text-base">
                         Complete Secure Donation
                     </button>
-                    <p class="text-xs text-center text-gray-500 mt-4">Your transaction is encrypted and secure. A tax
-                        receipt will be emailed instantly.</p>
+                    <p class="text-xs text-center text-gray-500 mt-3">
+                        🔒 Encrypted &amp; secure. A tax receipt will be emailed instantly.
+                    </p>
                 </form>
             </section>
 
-            <!-- Donor History Login -->
-            <section id="history" class="glass p-8 rounded-2xl shadow-2xl flex flex-col">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">My Donation History</h2>
+            <!-- Donor History -->
+            <section id="history" class="glass p-6 sm:p-8 rounded-2xl shadow-2xl flex flex-col" aria-labelledby="history-heading">
+                <h2 id="history-heading" class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">My Donation History</h2>
 
                 {% if not donor_history %}
-                <form method="POST" action="{% url 'public_portal' %}#history" class="mb-6">
+                <form method="POST" action="{% url 'public_portal' %}#history" class="mb-6" novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="action" value="login">
-                    <p class="text-gray-600 mb-4">Enter your email address to securely view all your past contributions
-                        and download receipts.</p>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">Enter your email address to view all your past contributions.</p>
 
                     <div class="flex gap-2">
-                        <input type="email" name="email" placeholder="you@example.com" required
-                            class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 bg-white/50 backdrop-blur-sm">
+                        <input type="email" name="email" placeholder="you@example.com" required autocomplete="email"
+                            class="flex-grow px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white/60 text-sm font-medium">
                         <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow transition">
-                            View History
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 sm:px-6 rounded-xl shadow transition text-sm shrink-0">
+                            View
                         </button>
                     </div>
                 </form>
 
-                <div
-                    class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl bg-white/30">
-                    <p class="text-gray-400 text-center px-6">Your impact history will appear here.</p>
+                <div class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl bg-white/30 min-h-[120px]">
+                    <p class="text-gray-400 text-center px-6 text-sm">Your impact history will appear here.</p>
                 </div>
                 {% else %}
-                <div
-                    class="mb-4 flex justify-between items-center bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                <div class="mb-4 flex justify-between items-center bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                     <div>
-                        <p class="text-sm text-gray-500">Viewing history for:</p>
-                        <p class="font-bold text-indigo-700">{{ donor_email }}</p>
+                        <p class="text-xs text-gray-500 font-medium">Viewing history for:</p>
+                        <p class="font-bold text-indigo-700 break-all text-sm">{{ donor_email }}</p>
                     </div>
-                    <a href="{% url 'public_portal' %}"
-                        class="text-sm font-semibold text-gray-500 hover:text-gray-700 underline">Sign out</a>
+                    <a href="{% url 'public_portal' %}" class="text-xs font-semibold text-gray-500 hover:text-gray-700 underline shrink-0 ml-2">Sign out</a>
                 </div>
 
-                <div class="overflow-y-auto pr-2" style="max-height: 400px;">
-                    <ul class="space-y-4">
+                <div class="overflow-y-auto pr-1" style="max-height: 420px;">
+                    <ul class="space-y-3" role="list">
                         {% for record in donor_history %}
-                        <li
-                            class="bg-white/60 rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center hover:bg-white/80 transition">
+                        <li class="bg-white/70 rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center hover:bg-white/90 transition">
                             <div>
-                                <p class="font-bold text-green-600">Ksh {{ record.Amount }}</p>
-                                <p class="text-xs text-gray-500">{{ record.Date|date:"M d, Y" }}</p>
+                                <p class="font-bold text-green-600 text-sm">Ksh {{ record.Amount }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    <time>{{ record.Date|date:"M d, Y" }}</time>
+                                </p>
                             </div>
                             <div class="text-right">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                                     {{ record.Status }}
                                 </span>
-                                <p class="text-xs text-gray-400 mt-1">
-                                    {{ record.CampaignID.Name|default:"General Fund" }}
-                                </p>
+                                <p class="text-xs text-gray-400 mt-1">{{ record.CampaignID.Name|default:"General Fund" }}</p>
                             </div>
                         </li>
+                        {% empty %}
+                        <li class="text-center py-8 text-gray-400 text-sm">No donations found for this email.</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -214,98 +305,121 @@
             </section>
         </div>
 
-        <!-- Contact & Volunteer Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
+        <!-- Contact + Volunteer -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-            <!-- Contact Us -->
-            <section id="contact"
-                class="glass p-8 rounded-2xl shadow-xl flex flex-col justify-center items-center text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Get in Touch</h2>
-                <p class="text-gray-600 mb-8">Have questions or want to partner with us? Reach out directly via our
-                    official channels.</p>
+            <!-- Contact -->
+            <section id="contact" class="glass p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col justify-center items-center text-center" aria-labelledby="contact-heading">
+                <h2 id="contact-heading" class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Get in Touch</h2>
+                <p class="text-gray-600 mb-8 text-sm max-w-sm leading-relaxed">
+                    Have questions or want to partner with us? Reach out directly via our official channels.
+                </p>
 
-                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                    <a href="https://wa.me/1234567890" target="_blank"
-                        class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1">
-                        <!-- WhatsApp Logo SVG -->
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.628.825 5.068 2.227 7.07L.581 24l5.066-1.619a11.96 11.96 0 006.384 1.834h.004c6.643 0 12.029-5.385 12.029-12.031C24.064 5.385 18.678 0 12.031 0zm0 22.25c-2.223 0-4.33-.585-6.195-1.674l-.444-.265-3.766 1.201 1.01-3.666-.291-.462A10.027 10.027 0 011.996 12.03c0-5.545 4.513-10.057 10.035-10.057 5.54 0 10.05 4.512 10.05 10.057 0 5.542-4.51 10.05-10.05 10.05zM17.5 14.5c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.95 1.18-.18.2-.35.23-.65.08-1.5-.75-2.65-1.45-3.68-3.05-.28-.43.15-.43.43-.98.3-.55.15-.85.08-1-.08-.15-.68-1.65-.93-2.25-.25-.6-.5-.53-.68-.53h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.13 3.25 5.15 4.55 2.1.9 2.93 1.03 3.98.88 1.1-.15 2.4-.98 2.75-1.93.35-.95.35-1.75.25-1.93-.1-.18-.3-.28-.6-.43z" />
+                <div class="flex flex-col sm:flex-row gap-3 w-full justify-center">
+                    <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer"
+                        class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition hover:-translate-y-1 transform text-sm">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.628.825 5.068 2.227 7.07L.581 24l5.066-1.619a11.96 11.96 0 006.384 1.834h.004c6.643 0 12.029-5.385 12.029-12.031C24.064 5.385 18.678 0 12.031 0zm0 22.25c-2.223 0-4.33-.585-6.195-1.674l-.444-.265-3.766 1.201 1.01-3.666-.291-.462A10.027 10.027 0 011.996 12.03c0-5.545 4.513-10.057 10.035-10.057 5.54 0 10.05 4.512 10.05 10.057 0 5.542-4.51 10.05-10.05 10.05zM17.5 14.5c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.95 1.18-.18.2-.35.23-.65.08-1.5-.75-2.65-1.45-3.68-3.05-.28-.43.15-.43.43-.98.3-.55.15-.85.08-1-.08-.15-.68-1.65-.93-2.25-.25-.6-.5-.53-.68-.53h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.13 3.25 5.15 4.55 2.1.9 2.93 1.03 3.98.88 1.1-.15 2.4-.98 2.75-1.93.35-.95.35-1.75.25-1.93-.1-.18-.3-.28-.6-.43z"/>
                         </svg>
                         WhatsApp
                     </a>
                     <a href="mailto:contact@pdmsfoundation.org"
-                        class="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1">
-                        <!-- Gmail/Email Logo SVG -->
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
+                        class="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition hover:-translate-y-1 transform text-sm">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
                         </svg>
                         Email Us
                     </a>
                 </div>
             </section>
 
-            <!-- Volunteer Registration Form -->
-            <section id="volunteer" class="glass p-8 rounded-2xl shadow-xl flex flex-col">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-                    <svg class="w-8 h-8 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                        </path>
+            <!-- Volunteer Form -->
+            <section id="volunteer" class="glass p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col" aria-labelledby="volunteer-heading">
+                <h2 id="volunteer-heading" class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                    <svg class="w-7 h-7 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
                     Join as a Volunteer
                 </h2>
-                <form method="POST" action="{% url 'public_portal' %}#volunteer">
+                <form method="POST" action="{% url 'public_portal' %}#volunteer" novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="action" value="volunteer">
-                    <p class="text-gray-600 mb-5">Offer your time and skills to help drive our active campaigns forward.
-                    </p>
+                    <p class="text-gray-600 mb-5 text-sm leading-relaxed">Offer your time and skills to help drive our active campaigns forward.</p>
 
                     <div class="mb-4">
-                        <label for="volunteer_name" class="block text-sm font-bold text-gray-700 mb-1">Full Name</label>
-                        <input type="text" id="volunteer_name" name="volunteer_name" required placeholder="Jane Doe"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/50 backdrop-blur-sm">
+                        <label for="volunteer_name" class="block text-sm font-bold text-gray-700 mb-1.5">Full Name <span class="text-rose-500" aria-hidden="true">*</span></label>
+                        <input type="text" id="volunteer_name" name="volunteer_name" required placeholder="Jane Doe" autocomplete="name"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/60 text-sm font-medium transition">
                     </div>
 
                     <div class="mb-6">
-                        <label for="volunteer_skills" class="block text-sm font-bold text-gray-700 mb-1">Expertise /
-                            Skills</label>
+                        <label for="volunteer_skills" class="block text-sm font-bold text-gray-700 mb-1.5">Expertise / Skills <span class="text-rose-500" aria-hidden="true">*</span></label>
                         <textarea id="volunteer_skills" name="volunteer_skills" required rows="3"
                             placeholder="E.g. Event management, social media, fundraising..."
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/50 backdrop-blur-sm"></textarea>
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/60 text-sm font-medium transition resize-y"></textarea>
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-extrabold py-3 px-6 rounded-xl shadow-lg transform transition duration-200 hover:scale-[1.02]">
+                        class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-extrabold py-3.5 px-6 rounded-xl shadow-lg transition hover:-translate-y-0.5 transform text-sm">
                         Submit Registration
                     </button>
                 </form>
             </section>
-
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="glass mt-16 py-8">
-        <div class="container mx-auto px-6 text-center text-gray-600">
-            <p>&copy; 2026 PDMS Foundation. All rights reserved. 501(c)(3) Organization.</p>
+    <footer class="glass-dark mt-10 py-8">
+        <div class="container mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
+            <p class="text-sm text-slate-400">&copy; 2026 PDMS Foundation. All rights reserved. 501(c)(3) Organization.</p>
+            <a href="/admin-login/" class="text-xs font-semibold text-slate-500 hover:text-blue-400 transition">Admin Portal &rarr;</a>
         </div>
     </footer>
 
-    <!-- Auto-hide Alerts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                const alerts = document.querySelectorAll('[role="alert"]');
-                alerts.forEach(alert => {
-                    alert.style.transition = 'opacity 0.5s ease-out';
+        // Mobile menu
+        const pubHamBtn = document.getElementById('pub-hamburger');
+        const pubMenu   = document.getElementById('pub-mobile-menu');
+        const pubHamIcon = document.getElementById('pub-ham-icon');
+        const pubCloseIcon = document.getElementById('pub-close-icon');
+
+        pubHamBtn.addEventListener('click', () => {
+            const isOpen = pubMenu.classList.toggle('open');
+            pubHamBtn.setAttribute('aria-expanded', isOpen);
+            pubHamIcon.classList.toggle('hidden', isOpen);
+            pubCloseIcon.classList.toggle('hidden', !isOpen);
+        });
+
+        function closeMobileMenu() {
+            pubMenu.classList.remove('open');
+            pubHamBtn.setAttribute('aria-expanded', 'false');
+            pubHamIcon.classList.remove('hidden');
+            pubCloseIcon.classList.add('hidden');
+        }
+
+        // Auto-dismiss alerts after 6 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const alerts = document.querySelectorAll('[role="alert"]');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                     alert.style.opacity = '0';
-                    setTimeout(() => alert.style.display = 'none', 500);
-                });
-            }, 5000);
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 6000);
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', e => {
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         });
     </script>
 </body>
-
 </html>

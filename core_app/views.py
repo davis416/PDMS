@@ -20,13 +20,13 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def donor_list(request):
     donors = Donor.objects.all().order_by('-Total_Donated')
-    
-    # Real-time Reporting Metrics
+
+    # Real-time Reporting Metrics — single aggregation pass
     total_funds = Donation.objects.filter(Status='COMPLETED').aggregate(total=models.Sum('Amount'))['total'] or 0.00
     active_campaigns = Campaign.objects.filter(End_Date__gte=timezone.now().date()).count()
     total_donors = donors.count()
-    
-    # Retention rate
+
+    # Retention rate (donors with more than 1 donation)
     retained_donors = Donor.objects.annotate(num_donations=models.Count('donations')).filter(num_donations__gt=1).count()
     retention_rate = (retained_donors / total_donors * 100) if total_donors > 0 else 0
 
@@ -56,7 +56,8 @@ def donor_create(request):
 @user_passes_test(is_admin)
 def donor_detail(request, pk):
     donor = get_object_or_404(Donor, pk=pk)
-    donations = donor.donations.all().order_by('-Date')
+    # Use select_related to avoid N+1 on CampaignID FK for each donation
+    donations = donor.donations.select_related('CampaignID').order_by('-Date')
     return render(request, 'donor_detail.html', {'donor': donor, 'donations': donations})
 
 @login_required
@@ -215,7 +216,8 @@ def process_donation(request):
 @login_required
 @user_passes_test(is_admin)
 def volunteer_list(request):
-    volunteers = Volunteer.objects.all().order_by('Name')
+    # select_related on CampaignID to avoid N+1 queries in template
+    volunteers = Volunteer.objects.select_related('CampaignID').order_by('Name')
     return render(request, 'volunteer_dashboard.html', {'volunteers': volunteers})
 
 @login_required
@@ -270,6 +272,7 @@ def admin_user_create(request):
 @login_required
 @user_passes_test(is_admin)
 def campaign_list(request):
+    # Single annotated query — no extra JOINs needed
     campaigns = Campaign.objects.annotate(
         collected=models.Sum('donations__Amount', filter=models.Q(donations__Status='COMPLETED'))
     ).order_by('-Start_Date')
@@ -292,9 +295,15 @@ def campaign_create(request):
 @user_passes_test(is_admin)
 def campaign_detail(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
-    donors = Donor.objects.filter(donations__CampaignID=campaign, donations__Status='COMPLETED').distinct()
-    collected = campaign.donations.filter(Status='COMPLETED').aggregate(total=models.Sum('Amount'))['total'] or 0.00
-    
+    # Fetch distinct donors who made completed donations to this campaign
+    donors = Donor.objects.filter(
+        donations__CampaignID=campaign,
+        donations__Status='COMPLETED'
+    ).distinct().order_by('Email')
+    collected = campaign.donations.filter(Status='COMPLETED').aggregate(
+        total=models.Sum('Amount')
+    )['total'] or 0.00
+
     return render(request, 'campaign_detail.html', {'campaign': campaign, 'donors': donors, 'collected': collected})
 
 @login_required
