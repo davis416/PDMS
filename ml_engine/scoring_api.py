@@ -29,8 +29,13 @@ def predict_propensity_score(donor_id):
     model = joblib.load(MODEL_PATH)
     
     # 3. Predict probability (propensity score)
-    # predict_proba returns [[prob_0, prob_1]]
-    score = model.predict_proba(features)[0][1]
+    # predict_proba returns [[prob_0, prob_1]] if both classes exist
+    probs = model.predict_proba(features)[0]
+    if len(probs) > 1:
+        score = probs[1]
+    else:
+        # If only one class exists in the model, return 1.0 if that class is 1, else 0.0
+        score = float(model.classes_[0])
     
     # 4. Save score back to Donor model
     # Using specific field update to minimize transaction blocking
