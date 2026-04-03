@@ -4,12 +4,13 @@ from .models import Donor, Donation, Volunteer, Campaign
 class CampaignForm(forms.ModelForm):
     class Meta:
         model = Campaign
-        fields = ['Name', 'Target_Amount', 'Start_Date', 'End_Date']
+        fields = ['Name', 'Target_Amount', 'Start_Date', 'End_Date', 'Impact_Statement']
         widgets = {
             'Name': forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
             'Target_Amount': forms.NumberInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'step': '0.01'}),
             'Start_Date': forms.DateInput(attrs={'type': 'date', 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
             'End_Date': forms.DateInput(attrs={'type': 'date', 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
+            'Impact_Statement': forms.Textarea(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'rows': 4, 'placeholder': 'Describe the impact achieved after target was reached...'}),
         }
 
 class DonorForm(forms.ModelForm):

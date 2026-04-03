@@ -22,6 +22,7 @@ class Campaign(models.Model):
     Target_Amount = models.DecimalField(max_digits=15, decimal_places=2)
     Start_Date = models.DateField()
     End_Date = models.DateField(db_index=True)  # indexed for active-campaign filter
+    Impact_Statement = models.TextField(null=True, blank=True, help_text="What was achieved after this campaign was completed.")
     
     def __str__(self):
         return self.Name
