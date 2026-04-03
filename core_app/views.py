@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse, HttpResponse
+from django.db.models.functions import Coalesce
 from .models import Donor, Donation, Campaign, Volunteer
 
 logger = logging.getLogger(__name__)
@@ -138,12 +139,21 @@ def process_donation(request):
     and showing donor history via email "login".
     Ensures ACID properties via @transaction.atomic.
     """
-    # 1. Fetch active campaigns with progress
-    campaigns = Campaign.objects.annotate(
-        collected=models.Sum('donations__Amount', filter=models.Q(donations__Status='COMPLETED'))
-    ).filter(End_Date__gte=timezone.now().date()).order_by('End_Date')
+    # 1. Fetch campaigns with progress
+    all_campaigns = Campaign.objects.annotate(
+        collected=Coalesce(models.Sum('donations__Amount', filter=models.Q(donations__Status='COMPLETED')), models.Value(0, output_field=models.DecimalField()), output_field=models.DecimalField())
+    )
     
-    context = {'campaigns': campaigns}
+    active_campaigns = all_campaigns.filter(
+        collected__lt=models.F('Target_Amount'),
+        End_Date__gte=timezone.now().date()
+    ).order_by('End_Date')
+    
+    completed_campaigns = all_campaigns.filter(
+        collected__gte=models.F('Target_Amount')
+    ).order_by('-End_Date')
+    
+    context = {'campaigns': active_campaigns, 'completed_campaigns': completed_campaigns}
 
     # 2. Handle "Login" or "Donation" POST requests
     if request.method == 'POST':
@@ -272,9 +282,9 @@ def admin_user_create(request):
 @login_required
 @user_passes_test(is_admin)
 def campaign_list(request):
-    # Single annotated query — no extra JOINs needed
+    # Single annotated query with Coalesce
     campaigns = Campaign.objects.annotate(
-        collected=models.Sum('donations__Amount', filter=models.Q(donations__Status='COMPLETED'))
+        collected=Coalesce(models.Sum('donations__Amount', filter=models.Q(donations__Status='COMPLETED')), models.Value(0, output_field=models.DecimalField()), output_field=models.DecimalField())
     ).order_by('-Start_Date')
     return render(request, 'campaign_dashboard.html', {'campaigns': campaigns})
 
